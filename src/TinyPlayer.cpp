@@ -10,6 +10,8 @@
 #include "AudioGeneratorMP3.h"
 #include "AudioOutputI2S.h"
 
+#include "FileList.h"
+
 // To run, set your ESP8266 build to 160MHz, and include a SPIFFS of 512KB or greater.
 // Use the "Tools->ESP8266/ESP32 Sketch Data Upload" menu to write the MP3 to SPIFFS
 // Then upload the sketch normally.  
@@ -46,10 +48,16 @@ void MDCallback(void *cbData, const char *type, bool isUnicode, const char *stri
 
 void setup()
 {
-  WiFi.mode(WIFI_OFF); 
+  WiFi.mode(WIFI_OFF);
+  WiFi.forceSleepBegin();
+  delay(1);
+
   Serial.begin(115200);
-  delay(1000);
+  Serial.println("Starting TinyPlayer");
   SPIFFS.begin();
+
+  dumpDirTree();
+
   Serial.printf("Preparing MP3...\n");
 
   audioLogger = &Serial;
@@ -71,7 +79,7 @@ void loop()
       delay(1000);
     }
   } else {
-    Serial.printf("MP3 exited");
+    Serial.println("MP3 exited");
     delay(1000);
   }
 }
