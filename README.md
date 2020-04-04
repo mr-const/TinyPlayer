@@ -8,9 +8,9 @@ Wiring Wemos D1 Mini to Adafruit MAX98357A
 
 ESP8266 has hardware I2S support so it's needed to wire dedicated pins
 
-5V -> Vin
-G  -> GND
+`5V -> Vin`
+`G  -> GND`
 
-RX -> DIN
-D8 -> BCLK
-D4 -> LRC
+`RX -> DIN`
+`D8 -> BCLK`
+`D4 -> LRC`
