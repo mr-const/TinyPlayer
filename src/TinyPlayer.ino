@@ -53,7 +53,7 @@ void setup()
   Serial.printf("Sample MP3 playback begins...\n");
 
   audioLogger = &Serial;
-  file = new AudioFileSourceSPIFFS("/pno-cs.mp3");
+  file = new AudioFileSourceSPIFFS("track.mp3");
   id3 = new AudioFileSourceID3(file);
   id3->RegisterMetadataCB(MDCallback, (void*)"ID3TAG");
   out = new AudioOutputI2SNoDAC();
@@ -66,7 +66,7 @@ void loop()
   if (mp3->isRunning()) {
     if (!mp3->loop()) mp3->stop();
   } else {
-    Serial.printf("MP3 done\n");
+    Serial.printf("MP3 done, restarting\n");
     delay(1000);
   }
 }
