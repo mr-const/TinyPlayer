@@ -8,7 +8,7 @@
 #include "AudioFileSourceSPIFFS.h"
 #include "AudioFileSourceID3.h"
 #include "AudioGeneratorMP3.h"
-#include "AudioOutputI2SNoDAC.h"
+#include "AudioOutputI2S.h"
 
 // To run, set your ESP8266 build to 160MHz, and include a SPIFFS of 512KB or greater.
 // Use the "Tools->ESP8266/ESP32 Sketch Data Upload" menu to write the MP3 to SPIFFS
@@ -18,7 +18,7 @@
 
 AudioGeneratorMP3 *mp3;
 AudioFileSourceSPIFFS *file;
-AudioOutputI2SNoDAC *out;
+AudioOutputI2S *out;
 AudioFileSourceID3 *id3;
 
 
@@ -50,13 +50,13 @@ void setup()
   Serial.begin(115200);
   delay(1000);
   SPIFFS.begin();
-  Serial.printf("Sample MP3 playback begins...\n");
+  Serial.printf("Preparing MP3...\n");
 
   audioLogger = &Serial;
   file = new AudioFileSourceSPIFFS("track.mp3");
   id3 = new AudioFileSourceID3(file);
   id3->RegisterMetadataCB(MDCallback, (void*)"ID3TAG");
-  out = new AudioOutputI2SNoDAC();
+  out = new AudioOutputI2S();
   mp3 = new AudioGeneratorMP3();
   mp3->begin(id3, out);
 }
@@ -64,9 +64,14 @@ void setup()
 void loop()
 {
   if (mp3->isRunning()) {
-    if (!mp3->loop()) mp3->stop();
+    if (!mp3->loop())
+    {
+      Serial.printf("MP3 done, restarting\n");
+      id3->seek(SEEK_SET, 0);
+      delay(1000);
+    }
   } else {
-    Serial.printf("MP3 done, restarting\n");
+    Serial.printf("MP3 exited");
     delay(1000);
   }
 }
